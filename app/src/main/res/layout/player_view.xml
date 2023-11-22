@@ -1,0 +1,288 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:clickable="true"
+    android:visibility="gone"
+    android:id="@+id/player_view_layout">
+
+    <!--    app bar-->
+    <RelativeLayout
+        android:id="@+id/appBar"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_32sdp"
+        android:background="@color/bg">
+
+        <TextView
+            android:id="@+id/current_playing_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_centerInParent="true"
+            android:layout_marginLeft="@dimen/_30sdp"
+            android:text="Now Playing"
+            android:textColor="@color/white"
+            android:textSize="@dimen/_16sdp" />
+
+
+        <ImageView
+            android:id="@+id/player_playList_btn"
+            android:layout_width="@dimen/_20sdp"
+            android:layout_height="@dimen/_20sdp"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="@dimen/_1sdp"
+            android:layout_marginStart="@dimen/_5sdp"
+            android:src="@drawable/playlist_icon"
+            android:background="@drawable/ripple_effect_bg_color"/>
+
+        <ImageView
+            android:id="@+id/player_Settings_btn"
+            android:layout_width="@dimen/_20sdp"
+            android:layout_height="@dimen/_20sdp"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="@dimen/_1sdp"
+            android:layout_marginEnd="@dimen/_5sdp"
+            android:src="@drawable/settings_icon"
+            android:layout_alignParentEnd="true"
+            android:background="@drawable/ripple_effect_bg_color"/>
+
+
+    </RelativeLayout>
+
+
+    <!--    music logo display-->
+    <RelativeLayout
+        android:id="@+id/music_logo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/appBar"
+        android:layout_marginTop="@dimen/_50sdp"
+        android:padding="@dimen/_10sdp">
+
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/song_image"
+            android:layout_width="@dimen/_200sdp"
+            android:layout_height="@dimen/_200sdp"
+            android:layout_centerInParent="true"
+            android:src="@drawable/music"
+            app:civ_border_color="@color/grey"
+            app:civ_border_width="2dp" />
+
+    </RelativeLayout>
+
+
+    <!--    music name display-->
+    <RelativeLayout
+        android:id="@+id/music_name_display"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/music_logo"
+        android:layout_marginTop="@dimen/_10sdp">
+
+        <TextView
+            android:id="@+id/song_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_marginStart="@dimen/_10sdp"
+            android:ellipsize="marquee"
+            android:marqueeRepeatLimit="marquee_forever"
+            android:padding="@dimen/_4sdp"
+            android:singleLine="true"
+            android:text="Music Name"
+            android:textColor="@color/black"
+            android:textSize="@dimen/_14sdp" />
+
+    </RelativeLayout>
+
+
+    <!--    seekBar display-->
+    <RelativeLayout
+        android:id="@+id/seekbarDisplay"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/music_name_display"
+        android:layout_marginTop="@dimen/_10sdp">
+
+        <TextView
+            android:id="@+id/total_song_played_duration"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_centerInParent="true"
+            android:layout_marginStart="@dimen/_5sdp"
+            android:text="00:00"
+            android:textColor="@color/black" />
+
+        <androidx.appcompat.widget.AppCompatSeekBar
+            android:id="@+id/seekbar"
+            android:layout_width="@dimen/_250sdp"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:progressDrawable="@drawable/seekbar"
+            android:layout_centerVertical="true"
+            android:progressTint="@color/bg"
+            android:splitTrack="false"
+            android:thumb="@drawable/seekbar_thum"/>
+
+        <TextView
+            android:id="@+id/total_song_duration"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerInParent="true"
+            android:layout_marginEnd="@dimen/_5sdp"
+            android:text="00:00"
+            android:textColor="@color/black" />
+
+    </RelativeLayout>
+
+
+    <!--    buttons of player-->
+    <RelativeLayout
+        android:id="@+id/button_of_player"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/seekbarDisplay"
+        android:layout_marginTop="@dimen/_25sdp">
+
+        <ImageView
+            android:id="@+id/player_play_btn"
+            android:layout_width="@dimen/_30sdp"
+            android:layout_height="@dimen/_30sdp"
+            android:layout_centerInParent="true"
+            android:src="@drawable/play_icon"
+            android:background="@drawable/ripple_effect"/>
+
+        <ImageView
+            android:id="@+id/player_previous_btn"
+            android:layout_width="@dimen/_30sdp"
+            android:layout_height="@dimen/_30sdp"
+            android:src="@drawable/previous_icon"
+            android:layout_centerInParent="true"
+            android:layout_toStartOf="@+id/player_play_btn"
+            android:background="@drawable/ripple_effect"/>
+
+        <ImageView
+            android:id="@+id/player_fast_rewind_btn"
+            android:layout_width="@dimen/_30sdp"
+            android:layout_height="@dimen/_30sdp"
+            android:layout_centerInParent="true"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:layout_marginEnd="@dimen/_10sdp"
+            android:layout_marginBottom="@dimen/_10sdp"
+            android:layout_toStartOf="@+id/player_previous_btn"
+            android:background="@drawable/ripple_effect"
+            android:src="@drawable/player_fast_rewind_icon"
+            android:visibility="gone"/>
+
+        <ImageView
+            android:id="@+id/player_next_btn"
+            android:layout_width="@dimen/_30sdp"
+            android:layout_height="@dimen/_30sdp"
+            android:layout_centerInParent="true"
+            android:layout_toEndOf="@+id/player_play_btn"
+            android:background="@drawable/ripple_effect"
+            android:src="@drawable/next_icon" />
+
+        <ImageView
+            android:id="@+id/player_fast_forward_btn"
+            android:layout_width="@dimen/_30sdp"
+            android:layout_height="@dimen/_30sdp"
+            android:layout_centerInParent="true"
+            android:layout_marginStart="@dimen/_10sdp"
+            android:layout_toEndOf="@+id/player_next_btn"
+            android:background="@drawable/ripple_effect"
+            android:src="@drawable/player_fast_forward_icon"
+            android:visibility="gone"/>
+
+        <ImageView
+            android:id="@+id/player_repeat_btn"
+            android:layout_width="@dimen/_20sdp"
+            android:layout_height="@dimen/_20sdp"
+            android:layout_alignParentStart="true"
+            android:layout_centerInParent="true"
+            android:layout_marginStart="@dimen/_40sdp"
+            android:background="@drawable/ripple_effect"
+            android:src="@drawable/repeat_icon"
+            android:visibility="visible"/>
+
+        <ImageView
+            android:id="@+id/player_shuffle_btn"
+            android:layout_width="@dimen/_20sdp"
+            android:layout_height="@dimen/_20sdp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerInParent="true"
+            android:layout_marginEnd="@dimen/_40sdp"
+            android:background="@drawable/ripple_effect"
+            android:src="@drawable/shuffle_icon"
+            android:visibility="visible"/>
+
+
+    </RelativeLayout>
+
+
+    <!--    visualizer display-->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/button_of_player">
+
+        <com.chibde.visualizer.BarVisualizer
+            android:id="@+id/Bar_visualizer"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone"
+            />
+
+        <com.chibde.visualizer.LineVisualizer
+            android:id="@+id/Line_visualizer"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone"/>
+
+        <com.chibde.visualizer.CircleVisualizer
+            android:id="@+id/Circle_visualizer"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone"/>
+
+        <com.chibde.visualizer.CircleBarVisualizer
+            android:id="@+id/CircleBar_visualizer"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone"/>
+
+        <com.chibde.visualizer.LineBarVisualizer
+            android:id="@+id/LineBar_visualizer"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone"/>
+
+        <com.chibde.visualizer.SquareBarVisualizer
+            android:id="@+id/SquareBar_visualizer"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone"/>
+
+
+    </RelativeLayout>
+
+
+    <eightbitlab.com.blurview.BlurView
+        android:id="@+id/blurView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        >
+
+    </eightbitlab.com.blurview.BlurView>
+
+        <include layout="@layout/setting_view"/>
+
+
+</RelativeLayout>

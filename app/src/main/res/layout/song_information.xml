@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+<!--    main layout-->
+    <RelativeLayout
+        android:id="@+id/song_details_main_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_margin="@dimen/_30sdp"
+        android:background="@drawable/perm_box_bg"
+        >
+        <!--    music name-->
+        <RelativeLayout
+            android:id="@+id/Music_Details_Layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/_10sdp">
+
+            <TextView
+                android:id="@+id/Music_Details_Name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_5sdp"
+                android:layout_marginTop="@dimen/_5sdp"
+                android:layout_marginEnd="@dimen/_5sdp"
+                android:layout_marginBottom="@dimen/_5sdp"
+                android:ellipsize="marquee"
+                android:marqueeRepeatLimit="marquee_forever"
+                android:singleLine="true"
+                android:text="Music Name"
+                android:textColor="@color/bg"
+                android:textSize="@dimen/_18sdp" />
+        </RelativeLayout>
+
+        <!--    music path-->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/Music_path"
+            android:layout_below="@+id/Music_Details_Layout"
+            android:layout_margin="@dimen/_8sdp">
+
+
+            <TextView
+                android:id="@+id/file_path_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="File path:"
+                android:textSize="@dimen/_15sdp"
+                android:textStyle="bold"
+                android:textColor="@color/black"
+                android:layout_marginStart="@dimen/_5sdp"/>
+
+            <TextView
+                android:id="@+id/file_path_display"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:textSize="@dimen/_15sdp"
+                android:layout_toEndOf="@+id/file_path_text"
+                android:textColor="@color/black"
+                android:layout_marginStart="@dimen/_2sdp"/>
+
+
+
+        </RelativeLayout>
+
+        <!--    music size-->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/Music_size"
+            android:layout_below="@+id/Music_path"
+            android:layout_margin="@dimen/_8sdp">
+
+
+            <TextView
+                android:id="@+id/file_size_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="size:"
+                android:textSize="@dimen/_15sdp"
+                android:textStyle="bold"
+                android:textColor="@color/black"
+                android:layout_marginStart="@dimen/_5sdp"/>
+
+            <TextView
+                android:id="@+id/song_size_display"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:textSize="@dimen/_15sdp"
+                android:layout_toEndOf="@+id/file_size_text"
+                android:textColor="@color/black"
+                android:layout_marginStart="@dimen/_2sdp"/>
+
+
+
+        </RelativeLayout>
+
+        <!--    music duration-->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/Music_duration"
+            android:layout_below="@+id/Music_size"
+            android:layout_margin="@dimen/_8sdp">
+
+
+            <TextView
+                android:id="@+id/file_duration_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Duration:"
+                android:textSize="@dimen/_15sdp"
+                android:textStyle="bold"
+                android:textColor="@color/black"
+                android:layout_marginStart="@dimen/_5sdp"/>
+
+            <TextView
+                android:id="@+id/song_duration_display"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:textSize="@dimen/_15sdp"
+                android:layout_toEndOf="@+id/file_duration_text"
+                android:textColor="@color/black"
+                android:layout_marginStart="@dimen/_2sdp"/>
+
+
+
+        </RelativeLayout>
+
+        <!--    ok button-->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/Music_duration"
+            android:layout_margin="@dimen/_8sdp">
+
+            <TextView
+                android:id="@+id/ok_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="OK"
+                android:textSize="@dimen/_18sdp"
+                android:textColor="@color/bg"
+                android:gravity="center"/>
+
+        </RelativeLayout>
+    </RelativeLayout>
+
+
+</RelativeLayout>

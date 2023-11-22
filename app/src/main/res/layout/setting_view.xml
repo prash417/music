@@ -1,0 +1,260 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:clickable="true"
+    android:focusable="true"
+    android:visibility="gone"
+    android:id="@+id/Settings_View">
+
+
+<!--    main layout-->
+    <RelativeLayout
+        android:layout_width="@dimen/_180sdp"
+        android:layout_height="match_parent"
+        android:layout_alignParentEnd="true"
+        android:background="@drawable/settings_bg">
+
+        <!--    music name and back button-->
+        <RelativeLayout
+            android:id="@+id/music_name_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/settings_back"
+                android:layout_width="@dimen/_20sdp"
+                android:layout_height="@dimen/_20sdp"
+                android:layout_alignParentEnd="true"
+                android:layout_marginStart="@dimen/_5sdp"
+                android:layout_marginTop="@dimen/_5sdp"
+                android:layout_marginEnd="@dimen/_2sdp"
+                android:layout_marginBottom="@dimen/_5sdp"
+                android:src="@drawable/forward_icon" />
+
+            <TextView
+                android:id="@+id/settings_music_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_8sdp"
+                android:layout_marginTop="@dimen/_8sdp"
+                android:layout_marginEnd="@dimen/_8sdp"
+                android:layout_marginBottom="@dimen/_8sdp"
+                android:layout_toStartOf="@+id/settings_back"
+                android:ellipsize="marquee"
+                android:marqueeRepeatLimit="marquee_forever"
+                android:singleLine="true"
+                android:text="Music Name"
+                android:textColor="@color/bg"
+                android:textSize="@dimen/_15sdp" />
+        </RelativeLayout>
+
+
+<!--        Controls Text layout-->
+        <RelativeLayout
+            android:id="@+id/Control_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/music_name_layout">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_centerInParent="true"
+                android:layout_marginStart="@dimen/_5sdp"
+                android:layout_marginTop="@dimen/_5sdp"
+                android:layout_marginEnd="@dimen/_5sdp"
+                android:layout_marginBottom="@dimen/_5sdp"
+                android:text="Controls"
+                android:textColor="@color/bg"
+                android:textSize="@dimen/_15sdp"
+                android:textStyle="bold" />
+
+
+            </RelativeLayout>
+
+<!--        controls checkbox-->
+        <RelativeLayout
+            android:id="@+id/control_check_box_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/Control_text">
+
+            <!--        Forward and Rewind layout-->
+            <RelativeLayout
+                android:id="@+id/Forward_Rewind_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/_5sdp">
+
+
+                <CheckBox
+                    android:id="@+id/enable_Forward_Rewind"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/ripple_effect"
+                    android:button="@drawable/custom_check_box"
+                    android:padding="@dimen/_5sdp"
+                    android:text="Forward and Rewind"
+                    android:textSize="@dimen/_12sdp"
+                    android:textColor="@color/black"
+                    tools:ignore="TextSizeCheck" />
+
+            </RelativeLayout>
+
+            <!--        Repeat and Shuffle layout-->
+            <RelativeLayout
+                android:id="@+id/Repeat_shuffle_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/Forward_Rewind_layout"
+                android:layout_margin="@dimen/_5sdp">
+
+
+                <CheckBox
+                    android:id="@+id/enable_Repeat_shuffle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/ripple_effect"
+                    android:button="@drawable/custom_check_box"
+                    android:padding="@dimen/_5sdp"
+                    android:text="Repeat and Shuffle"
+                    android:textSize="@dimen/_12sdp"
+                    android:textColor="@color/black"
+                    tools:ignore="TextSizeCheck" />
+
+            </RelativeLayout>
+
+        </RelativeLayout>
+
+
+        <!--        Controls visualizer layout-->
+        <RelativeLayout
+            android:id="@+id/visualizer_text_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/control_check_box_layout">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_centerInParent="true"
+                android:layout_marginStart="@dimen/_5sdp"
+                android:layout_marginTop="@dimen/_5sdp"
+                android:layout_marginEnd="@dimen/_5sdp"
+                android:layout_marginBottom="@dimen/_5sdp"
+                android:text="visualizers"
+                android:textColor="@color/bg"
+                android:textSize="@dimen/_15sdp"
+                android:textStyle="bold" />
+
+
+        </RelativeLayout>
+
+
+        <!--        controls visualizer-->
+        <RelativeLayout
+            android:id="@+id/control_visualizer_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/visualizer_text_layout">
+
+            <RadioGroup
+                android:id="@+id/Visualizer_Group"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <RadioButton
+                    android:id="@+id/enable_BarVisualizer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/_5sdp"
+                    android:button="@drawable/custom_check_box"
+                    android:padding="@dimen/_5sdp"
+                    android:text="BarVisualizer"
+                    android:textSize="@dimen/_12sdp"
+                    tools:ignore="TextSizeCheck"
+                    android:onClick="getBV"/>
+
+                <RadioButton
+                    android:id="@+id/enable_LineVisualizer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/_5sdp"
+                    android:button="@drawable/custom_check_box"
+                    android:padding="@dimen/_5sdp"
+                    android:text="LineVisualizer"
+                    android:textSize="@dimen/_12sdp"
+                    tools:ignore="TextSizeCheck"
+                    android:onClick="getLV"/>
+
+                <RadioButton
+                    android:id="@+id/enable_CircleVisualizer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/_5sdp"
+                    android:button="@drawable/custom_check_box"
+                    android:padding="@dimen/_5sdp"
+                    android:text="CircleVisualizer"
+                    android:textSize="@dimen/_12sdp"
+                    tools:ignore="TextSizeCheck"
+                    android:onClick="getCV"/>
+
+                <RadioButton
+                    android:id="@+id/enable_CircleBarVisualizer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/_5sdp"
+                    android:button="@drawable/custom_check_box"
+                    android:padding="@dimen/_5sdp"
+                    android:text="Circle Bar Visualizer"
+                    android:textSize="@dimen/_12sdp"
+                    tools:ignore="TextSizeCheck"
+                    android:onClick="getCBV"/>
+
+                <RadioButton
+                    android:id="@+id/enable_LineBarVisualizer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/_5sdp"
+                    android:button="@drawable/custom_check_box"
+                    android:padding="@dimen/_5sdp"
+                    android:text="Line Bar Visualizer"
+                    android:textSize="@dimen/_12sdp"
+                    tools:ignore="TextSizeCheck"
+                    android:onClick="getLB"/>
+
+                <RadioButton
+                    android:id="@+id/enable_SquareBarVisualizer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/_5sdp"
+                    android:button="@drawable/custom_check_box"
+                    android:padding="@dimen/_5sdp"
+                    android:text="Square Bar Visualizer"
+                    android:textSize="@dimen/_12sdp"
+                    tools:ignore="TextSizeCheck"
+                    android:onClick="getSB"/>
+
+                <RadioButton
+                    android:id="@+id/None"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/_5sdp"
+                    android:button="@drawable/custom_check_box"
+                    android:padding="@dimen/_5sdp"
+                    android:text="None"
+                    android:textSize="@dimen/_12sdp"
+                    tools:ignore="TextSizeCheck"
+                    android:onClick="getNone"/>
+            </RadioGroup>
+        </RelativeLayout>
+
+        </RelativeLayout>
+
+
+</RelativeLayout>

@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    android:id="@+id/songRow"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/white"
+    android:padding="@dimen/_1sdp"
+    android:layout_marginBottom="@dimen/_2sdp"
+    android:paddingBottom="@dimen/_5sdp">
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/song_card"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginVertical="@dimen/_2sdp"
+        android:layout_marginHorizontal="@dimen/_6sdp"
+        app:cardCornerRadius="@dimen/_10sdp"
+        >
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/ripple_effect">
+
+            <ImageView
+                android:id="@+id/songs_view"
+                android:layout_width="@dimen/_40sdp"
+                android:layout_height="@dimen/_40sdp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:scaleType="centerCrop"
+                android:src="@drawable/music"
+                android:contentDescription="Music"
+                android:padding="@dimen/_5sdp"/>
+
+            <ImageView
+                android:id="@+id/More_icon"
+                android:layout_width="@dimen/_36sdp"
+                android:layout_height="@dimen/_36sdp"
+               app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:scaleType="centerCrop"
+                android:src="@drawable/more_icon"
+                android:contentDescription="Music"
+                android:padding="@dimen/_5sdp"
+                android:background="@drawable/ripple_effect"/>
+
+            <TextView
+                android:id="@+id/song_name"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_1sdp"
+                android:maxLines="1"
+                android:paddingTop="@dimen/_2sdp"
+                android:text="Music Name"
+                android:textColor="@color/black"
+                android:textSize="@dimen/_12sdp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toStartOf="@+id/More_icon"
+                app:layout_constraintStart_toEndOf="@id/songs_view"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:ignore="TextSizeCheck" />
+
+            <TextView
+                android:id="@+id/song_Duration"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_1sdp"
+                android:layout_marginBottom="@dimen/_4sdp"
+                android:text="05:23"
+                android:textColor="@color/black"
+                android:textSize="@dimen/_10sdp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@id/songs_view"
+                tools:ignore="TextSizeCheck" />
+
+            <TextView
+                android:id="@+id/song_Size"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_25sdp"
+                android:layout_marginBottom="@dimen/_4sdp"
+                android:text="05.2 MB"
+                android:textColor="@color/black"
+                android:textSize="@dimen/_10sdp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@id/song_Duration"
+                tools:ignore="TextSizeCheck" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </com.google.android.material.card.MaterialCardView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

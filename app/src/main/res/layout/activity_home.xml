@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Home.HomeActivity"
+    android:background="@color/white">
+
+    <!--    app bar-->
+    <RelativeLayout
+        android:id="@+id/appBar"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_32sdp"
+        android:background="@color/bg">
+
+        <TextView
+            android:id="@+id/Music_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_centerInParent="true"
+            android:layout_marginLeft="@dimen/_14sdp"
+            android:text="Music"
+            android:textColor="@color/white"
+            android:textSize="@dimen/_16sdp"
+            android:visibility="visible" />
+
+        <ImageView
+            android:id="@+id/search_song_icon"
+            android:layout_width="@dimen/_20sdp"
+            android:layout_height="@dimen/_20sdp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerInParent="true"
+            android:layout_marginRight="@dimen/_4sdp"
+            android:src="@drawable/search_icon"
+            android:visibility="visible"
+            android:background="@drawable/ripple_effect_bg_color"/>
+
+        <ImageView
+            android:id="@+id/back_song_icon"
+            android:layout_width="@dimen/_20sdp"
+            android:layout_height="@dimen/_20sdp"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="@dimen/_1sdp"
+            android:layout_marginStart="@dimen/_5sdp"
+            android:src="@drawable/back_icon"
+            android:visibility="gone"
+            android:background="@drawable/ripple_effect_bg_color"/>
+
+
+        <EditText
+            android:id="@+id/search_song_Text"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_25sdp"
+            android:layout_toStartOf="@+id/search_song_icon"
+            android:layout_toEndOf="@+id/back_song_icon"
+            android:hint="Search Song"
+            android:textColorHint="@color/grey"
+            android:textColor="@color/white"
+            android:background="@drawable/edit_text_bg"
+            android:layout_centerInParent="true"
+            android:layout_marginEnd="@dimen/_5sdp"
+            android:gravity="center_vertical"
+            android:paddingStart="@dimen/_4sdp"
+            android:visibility="gone"
+            android:drawableStart="@drawable/search_icon"
+            android:drawablePadding="@dimen/_1sdp"
+            />
+
+    </RelativeLayout>
+
+
+    <!--    songs display RecyclerView-->
+    <RelativeLayout
+        android:id="@+id/Songs_Display_Layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/appBar"
+        android:layout_above="@id/homeControlWrapper"
+        android:background="@color/white">
+
+        <TextView
+            android:id="@+id/NoSongFoundText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="No song's found!"
+            android:textColor="@color/bg"
+            android:textSize="@dimen/_18sdp"
+            android:layout_centerInParent="true"
+            android:gravity="center"
+            android:visibility="gone"/>
+
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/swipe_refresh">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/Songs_Display"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginStart="@dimen/_2sdp"
+                android:layout_marginTop="@dimen/_2sdp"
+                android:layout_marginEnd="@dimen/_2sdp"
+                android:layout_marginBottom="@dimen/_2sdp"
+                android:nestedScrollingEnabled="false"
+                android:visibility="visible"/>
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+
+
+    </RelativeLayout>
+
+
+    <!--    home player-->
+    <RelativeLayout
+        android:id="@+id/homeControlWrapper"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_32sdp"
+        android:layout_alignParentBottom="true"
+        android:background="@color/bg"
+        android:clickable="true"
+        android:visibility="gone">
+
+        <ImageView
+            android:id="@+id/audio_track_icon"
+            android:layout_width="@dimen/_15sdp"
+            android:layout_height="@dimen/_15sdp"
+            android:src="@drawable/audiotrack_icon"
+            android:layout_centerVertical="true"
+            />
+
+        <TextView
+            android:id="@+id/music_name"
+            android:layout_width="@dimen/_220sdp"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="@dimen/_2sdp"
+            android:layout_toEndOf="@+id/audio_track_icon"
+            android:ellipsize="marquee"
+            android:marqueeRepeatLimit="marquee_forever"
+            android:singleLine="true"
+            android:text="Music Name"
+            android:textColor="@color/purple_200"
+            android:textSize="@dimen/_12sdp"
+            tools:ignore="TextSizeCheck" />
+
+
+        <ImageView
+            android:id="@+id/previous_icon"
+            android:layout_width="@dimen/_25sdp"
+            android:layout_height="@dimen/_25sdp"
+            android:src="@drawable/home_previous_icon"
+            android:layout_centerVertical="true"
+            android:layout_toEndOf="@+id/music_name"
+            android:background="@drawable/ripple_effect_bg_color"
+            />
+
+        <ImageView
+            android:id="@+id/play_icon"
+            android:layout_width="@dimen/_25sdp"
+            android:layout_height="@dimen/_25sdp"
+            android:src="@drawable/home_play_icon"
+            android:layout_centerVertical="true"
+            android:layout_toEndOf="@+id/previous_icon"
+            android:background="@drawable/ripple_effect_bg_color"/>
+
+        <ImageView
+            android:id="@+id/next_icon"
+            android:layout_width="@dimen/_25sdp"
+            android:layout_height="@dimen/_25sdp"
+            android:src="@drawable/home_next_icon"
+            android:layout_centerVertical="true"
+            android:layout_toEndOf="@+id/play_icon"
+            android:background="@drawable/ripple_effect_bg_color"/>
+
+    </RelativeLayout>
+
+
+    <include layout="@layout/player_view"/>
+
+</RelativeLayout>
