@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
+<RelativeLayout
     android:id="@+id/songRow"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
@@ -13,7 +13,7 @@
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/song_card"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -40,21 +40,22 @@
 
             <ImageView
                 android:id="@+id/More_icon"
-                android:layout_width="@dimen/_36sdp"
-                android:layout_height="@dimen/_36sdp"
-               app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
+                android:layout_width="@dimen/_28sdp"
+                android:layout_height="@dimen/_28sdp"
+                android:background="@drawable/ripple_effect"
+                android:contentDescription="Music"
                 android:scaleType="centerCrop"
                 android:src="@drawable/more_icon"
-                android:contentDescription="Music"
-                android:padding="@dimen/_5sdp"
-                android:background="@drawable/ripple_effect"/>
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
                 android:id="@+id/song_name"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/_1sdp"
+                android:layout_marginTop="@dimen/_5sdp"
                 android:maxLines="1"
                 android:paddingTop="@dimen/_2sdp"
                 android:text="Music Name"
@@ -96,4 +97,4 @@
 
     </com.google.android.material.card.MaterialCardView>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</RelativeLayout>

@@ -6,6 +6,8 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.view.LayoutInflater;
@@ -42,12 +44,14 @@ public class SongAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>  
 
     int current_pos = 0;
 
+    int playPos = 0;
+
+
     private  onItemClickListener listener;
     //interface
     public interface onItemClickListener{
         void onItemClick(Song position);
     }
-
     //method
     public void setOnItemClickListener(onItemClickListener clickListener){
         listener = clickListener;
@@ -58,7 +62,6 @@ public class SongAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>  
     public interface onItemClickRingListener{
         void onItemRingClick(Song position);
     }
-
     public void setOnItemRingClickListener(onItemClickRingListener clickRingListener){
         ringListener = clickRingListener;
     }
@@ -113,7 +116,6 @@ public class SongAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>  
         //play song on item click
         viewHolder.itemView.setOnClickListener(View ->{
 
-
             //start the player service
             context.startService(new Intent(context.getApplicationContext(), PlayerService.class));
 
@@ -144,8 +146,6 @@ public class SongAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>  
             }
         });
 
-
-
         viewHolder.More_icon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -159,13 +159,15 @@ public class SongAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>  
                         player.prepare();
                         player.play();
 
-                    }if (menuItem.getItemId() == R.id.share_option){
+                    }
+                    if (menuItem.getItemId() == R.id.share_option){
                         Uri sharePath = song.getUri();
                         Intent share = new Intent(Intent.ACTION_SEND);
                         share.setType("audio/*");
                         share.putExtra(Intent.EXTRA_STREAM, sharePath);
                         context.startActivity(Intent.createChooser(share, "Share Sound File"));
-                    }if (menuItem.getItemId() == R.id.delete_option){
+                    }
+                    if (menuItem.getItemId() == R.id.delete_option){
                         listener.onItemClick(songs.get(position));
                     }if (menuItem.getItemId() == R.id.set_as_ringtone_option){
                         ringListener.onItemRingClick(songs.get(position));
@@ -182,7 +184,6 @@ public class SongAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>  
                 });
             }
         });
-
 
     }
 
@@ -255,7 +256,8 @@ public class SongAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>  
         ImageView artworkHolder,More_icon;
         TextView titleHolder,durationHolder,sizeHolder;
 
-        public SongViewHolder(@NonNull View itemView, onItemClickListener listener, onItemClickRingListener ringListener) {
+        public SongViewHolder(@NonNull View itemView, onItemClickListener listener,
+                              onItemClickRingListener ringListener) {
             super(itemView);
 
             artworkHolder = itemView.findViewById(R.id.songs_view);
@@ -279,6 +281,14 @@ public class SongAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>  
     @SuppressLint("NotifyDataSetChanged")
     public void filterSong(List<Song> filteredList){
             songs = filteredList;
+            notifyDataSetChanged();
+            notifyItemChanged(current_pos);
+    }
+
+    //Fav song
+    @SuppressLint("NotifyDataSetChanged")
+    public void FavSong(List<Song> favList){
+            songs = favList;
             notifyDataSetChanged();
             notifyItemChanged(current_pos);
     }

@@ -3,6 +3,8 @@ package com.example.music.Home;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.IntentSenderRequest;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -35,7 +37,9 @@ import android.provider.MediaStore;
 import android.provider.Settings;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.GestureDetector;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -71,6 +75,7 @@ import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.MediaItem;
 import com.google.android.exoplayer2.MediaMetadata;
 import com.google.android.exoplayer2.Player;
+import com.google.android.material.tabs.TabLayout;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -147,7 +152,6 @@ public class HomeActivity extends AppCompatActivity {
     CheckBox enable_Forward_Rewind, enable_Repeat_shuffle;
     RadioButton enable_BarVisualizer, enable_LineVisualizer, enable_CircleVisualizer,
             enable_CircleBarVisualizer, enable_LineBarVisualizer, enable_SquareBarVisualizer, None;
-    RadioGroup Visualizer_Group;
     List<Song> filteredList = new ArrayList<>();
     Boolean search = false;
 
@@ -160,7 +164,6 @@ public class HomeActivity extends AppCompatActivity {
     Boolean LBV = false;
     Boolean SBV = false;
     Boolean NoneV = false;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -227,10 +230,6 @@ public class HomeActivity extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int i, int i1, int i2) {
-
-                if (s.toString() == null) {
-                    fetchSongs();
-                }
                 search = true;
                 filteredSong(s.toString());
 
@@ -260,6 +259,7 @@ public class HomeActivity extends AppCompatActivity {
                         Toast.makeText(this, "Failed try again!", Toast.LENGTH_SHORT).show();
                     }
                 });
+
     }
 
     //hide soft keyboard
@@ -548,7 +548,6 @@ public class HomeActivity extends AppCompatActivity {
             for (Song song : allSongs) {
                 if (song.getTitle().toLowerCase().contains(toString)) {
                     filteredList.add(song);
-
                 }
             }
             if (filteredList.isEmpty()) {
@@ -576,6 +575,7 @@ public class HomeActivity extends AppCompatActivity {
 
         //on click of home wrapper
         homeControlWrapper.setOnClickListener(view -> {
+            hideKeyBoard();
             player_view_layout.setVisibility(View.VISIBLE);
         });
 
@@ -1796,9 +1796,11 @@ public class HomeActivity extends AppCompatActivity {
                                 allSongs.remove(position);
                                 fetchSongs();
                                 Toast.makeText(HomeActivity.this, "File Deleted", Toast.LENGTH_SHORT).show();
+                                alertDialog.dismiss();
                             } catch (Exception e) {
                                 Toast.makeText(HomeActivity.this, "Not Allowed to delete", Toast.LENGTH_SHORT).show();
                                 fetchSongs();
+                                alertDialog.dismiss();
 
                             }
                         } else {
@@ -1810,6 +1812,7 @@ public class HomeActivity extends AppCompatActivity {
                             songDeleteIntentLauncher.launch(intentSenderRequest);
                             allSongs.remove(position);
                             fetchSongs();
+                            alertDialog.dismiss();
 
                         }
                     }
@@ -1861,12 +1864,14 @@ public class HomeActivity extends AppCompatActivity {
                         if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.Q) {
                             try {
                                 setAsRingtone(musicId);
+                                alertDialog.dismiss();
                             } catch (Exception e) {
                                 Toast.makeText(HomeActivity.this, "Something went Wrong", Toast.LENGTH_SHORT).show();
-
+                                alertDialog.dismiss();
                             }
                         } else {
                             setAsRingtone(musicId);
+                            alertDialog.dismiss();
                         }
                     }
                 });
@@ -1893,12 +1898,11 @@ public class HomeActivity extends AppCompatActivity {
         swipe_refresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                fetchSongs();
-                swipe_refresh.setRefreshing(false);
+                    fetchSongs();
+                    swipe_refresh.setRefreshing(false);
             }
         });
     }
-
     //set song as ringtone
     private void setAsRingtone(String musicId) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -1918,5 +1922,4 @@ public class HomeActivity extends AppCompatActivity {
             }
         }
     }
-
 }
