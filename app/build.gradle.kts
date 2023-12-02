@@ -50,5 +50,6 @@ dependencies {
     implementation("com.daimajia.androidanimations:library:2.4@aar")
     implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
     implementation("com.google.android.exoplayer:extension-mediasession:2.19.1")
+    implementation("com.google.code.gson:gson:2.10.1")
 
 }

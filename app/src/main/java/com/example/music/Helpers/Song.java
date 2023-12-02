@@ -6,18 +6,16 @@ public class Song {
 
     //members
     String title;
-    Uri uri;
-    Uri artworkUri;
+    String uri;
     int size;
     int duration;
     Long ID;
     String path;
 
 
-    public Song(String title, Uri uri, Uri artworkUri, int size, int duration, Long ID,String path) {
+    public Song(String title, String uri, int size, int duration, Long ID,String path) {
         this.title = title;
         this.uri = uri;
-        this.artworkUri = artworkUri;
         this.size = size;
         this.duration = duration;
         this.ID = ID;
@@ -32,20 +30,12 @@ public class Song {
         this.title = title;
     }
 
-    public Uri getUri() {
+    public String getUri() {
         return uri;
     }
 
-    public void setUri(Uri uri) {
+    public void setUri(String uri) {
         this.uri = uri;
-    }
-
-    public Uri getArtworkUri() {
-        return artworkUri;
-    }
-
-    public void setArtworkUri(Uri artworkUri) {
-        this.artworkUri = artworkUri;
     }
 
     public int getSize() {

@@ -6,8 +6,6 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.content.res.ColorStateList;
-import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.view.LayoutInflater;
@@ -19,6 +17,7 @@ import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
@@ -32,6 +31,7 @@ import com.google.android.exoplayer2.MediaMetadata;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 public class SongAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>  {
@@ -39,15 +39,17 @@ public class SongAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>  
     //members
     Context context;
     List<Song> songs;
+
     ExoPlayer player;
     RelativeLayout playerView;
 
     int current_pos = 0;
-
-    int playPos = 0;
+    boolean value = true;
 
 
     private  onItemClickListener listener;
+
+
     //interface
     public interface onItemClickListener{
         void onItemClick(Song position);
@@ -67,6 +69,20 @@ public class SongAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>  
     }
 
 
+
+
+    //interface for played song
+
+    private onItemClickPlayedListener playedListener;
+    public interface onItemClickPlayedListener{
+        void onItemPlayedClick(Song position);
+    }
+
+    public void setOnItemPlayedClickListener(onItemClickPlayedListener clickPlayedListener){
+        playedListener = clickPlayedListener;
+    }
+
+
     //constructor
     public SongAdapter(Context context, List<Song> songs, ExoPlayer player, RelativeLayout playerView) {
         this.context = context;
@@ -81,7 +97,7 @@ public class SongAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>  
 
         //inflate song row item
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.song_rows,parent,false);
-        return new SongViewHolder(view,listener,ringListener);
+        return new SongViewHolder(view,listener,ringListener,playedListener);
     }
     @SuppressLint("ResourceAsColor")
     @Override
@@ -100,19 +116,6 @@ public class SongAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>  
         viewHolder.sizeHolder.setText(getSize(song.getSize()));
 
 
-
-        //art work uri
-        Uri artworkUri = song.getArtworkUri();
-
-        if (artworkUri != null){
-            viewHolder.artworkHolder.setImageURI(artworkUri);
-
-            //make sure uri has an artwork
-            if (viewHolder.artworkHolder.getDrawable() == null){
-                viewHolder.artworkHolder.setImageResource(R.drawable.music);
-            }
-        }
-
         //play song on item click
         viewHolder.itemView.setOnClickListener(View ->{
 
@@ -122,15 +125,20 @@ public class SongAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>  
 
             if (player.isPlaying()){
                 player.setMediaItems(getMediaItems(),position,0);
+                playedListener.onItemPlayedClick(songs.get(position));
             }
 
 
             if (!player.isPlaying()){
                 player.setMediaItems(getMediaItems(),position,0);
+                playedListener.onItemPlayedClick(songs.get(position));
+
             }
             else {
                 player.pause();
                 player.seekTo(position,0);
+                playedListener.onItemPlayedClick(songs.get(position));
+
             }
 
             //prepare and play
@@ -158,10 +166,12 @@ public class SongAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>  
                         player.setMediaItems(getMediaItems(),current_pos,0);
                         player.prepare();
                         player.play();
+                        playedListener.onItemPlayedClick(songs.get(position));
+
 
                     }
                     if (menuItem.getItemId() == R.id.share_option){
-                        Uri sharePath = song.getUri();
+                        Uri sharePath = Uri.parse(song.getUri());
                         Intent share = new Intent(Intent.ACTION_SEND);
                         share.setType("audio/*");
                         share.putExtra(Intent.EXTRA_STREAM, sharePath);
@@ -169,9 +179,11 @@ public class SongAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>  
                     }
                     if (menuItem.getItemId() == R.id.delete_option){
                         listener.onItemClick(songs.get(position));
-                    }if (menuItem.getItemId() == R.id.set_as_ringtone_option){
+                    }
+                    if (menuItem.getItemId() == R.id.set_as_ringtone_option){
                         ringListener.onItemRingClick(songs.get(position));
-                    }if (menuItem.getItemId() == R.id.Details_option){
+                    }
+                    if (menuItem.getItemId() == R.id.Details_option){
                         String path = songs.get(position).getPath();
                         String size = getSize(songs.get(position).getSize());
                         String duration =getDuration(songs.get(position).getDuration());
@@ -179,7 +191,6 @@ public class SongAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>  
 
                         showAlertBox(path,size,duration,name);
                     }
-
                     return true;
                 });
             }
@@ -245,7 +256,6 @@ public class SongAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>  
     private MediaMetadata getMetaData(Song song) {
         return new MediaMetadata.Builder()
                 .setTitle(song.getTitle())
-                .setArtworkUri(song.getArtworkUri())
                 .build();
     }
 
@@ -257,7 +267,7 @@ public class SongAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>  
         TextView titleHolder,durationHolder,sizeHolder;
 
         public SongViewHolder(@NonNull View itemView, onItemClickListener listener,
-                              onItemClickRingListener ringListener) {
+                              onItemClickRingListener ringListener,onItemClickPlayedListener playedListener){
             super(itemView);
 
             artworkHolder = itemView.findViewById(R.id.songs_view);
@@ -285,12 +295,18 @@ public class SongAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>  
             notifyItemChanged(current_pos);
     }
 
-    //Fav song
     @SuppressLint("NotifyDataSetChanged")
-    public void FavSong(List<Song> favList){
-            songs = favList;
+    public void playedSong(List<Song> playedList){
+            songs = playedList;
             notifyDataSetChanged();
             notifyItemChanged(current_pos);
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    public void favSong(List<Song> favList) {
+        songs = favList;
+        notifyDataSetChanged();
+        notifyItemChanged(current_pos);
     }
 
     //get actual duration of song

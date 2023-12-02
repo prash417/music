@@ -9,6 +9,7 @@
     android:visibility="gone"
     android:id="@+id/player_view_layout">
 
+
     <!--    app bar-->
     <RelativeLayout
         android:id="@+id/appBar"
@@ -49,6 +50,17 @@
             android:layout_alignParentEnd="true"
             android:background="@drawable/ripple_effect_bg_color"/>
 
+        <ImageView
+            android:id="@+id/player_fav_btn"
+            android:layout_width="@dimen/_18sdp"
+            android:layout_height="@dimen/_18sdp"
+            android:layout_centerInParent="true"
+            android:layout_marginEnd="@dimen/_5sdp"
+            android:layout_toStartOf="@+id/player_Settings_btn"
+            android:background="@drawable/ripple_effect_bg_color"
+            android:src="@drawable/favorite_icon"
+            android:visibility="visible" />
+
 
     </RelativeLayout>
 
@@ -57,7 +69,7 @@
     <RelativeLayout
         android:id="@+id/music_logo"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="@dimen/_200sdp"
         android:layout_below="@id/appBar"
         android:layout_marginTop="@dimen/_50sdp"
         android:padding="@dimen/_10sdp">
@@ -69,6 +81,7 @@
             android:layout_height="@dimen/_200sdp"
             android:layout_centerInParent="true"
             android:src="@drawable/music"
+            android:visibility="visible"
             app:civ_border_color="@color/grey"
             app:civ_border_width="2dp" />
 

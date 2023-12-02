@@ -3,12 +3,9 @@ package com.example.music.Home;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.IntentSenderRequest;
 import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.LinearSmoothScroller;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
@@ -37,9 +34,7 @@ import android.provider.MediaStore;
 import android.provider.Settings;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.view.GestureDetector;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -53,7 +48,6 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RadioButton;
-import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -76,11 +70,16 @@ import com.google.android.exoplayer2.MediaItem;
 import com.google.android.exoplayer2.MediaMetadata;
 import com.google.android.exoplayer2.Player;
 import com.google.android.material.tabs.TabLayout;
+import com.google.common.reflect.TypeToken;
+import com.google.gson.Gson;
 
 import java.io.File;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import eightbitlab.com.blurview.BlurView;
@@ -108,9 +107,13 @@ public class HomeActivity extends AppCompatActivity {
     TextView music_name;
     ImageView previous_icon, play_icon, next_icon;
 
+    TabLayout TabLayout;
+
 
     //player view members are here
-    ImageView player_fast_rewind_btn, player_fast_forward_btn, player_Settings_btn, player_playList_btn, player_play_btn, player_previous_btn, player_next_btn, player_repeat_btn, player_shuffle_btn;
+    ImageView player_fast_rewind_btn, player_fast_forward_btn, player_Settings_btn,
+            player_playList_btn, player_play_btn, player_previous_btn, player_next_btn,
+            player_repeat_btn, player_shuffle_btn,player_fav_btn;
     TextView player_song_name, total_song_played_duration, total_song_duration;
     SeekBar player_seekbar;
     BarVisualizer Bar_visualizer;
@@ -133,7 +136,6 @@ public class HomeActivity extends AppCompatActivity {
 
     public ActivityResultLauncher<String> recordAudioPermissionLauncher;
     public final String recordAudioPermission = Manifest.permission.RECORD_AUDIO;
-
 
     Boolean playHomeValue = false;
     Boolean playPlayerValue = false;
@@ -165,6 +167,18 @@ public class HomeActivity extends AppCompatActivity {
     Boolean SBV = false;
     Boolean NoneV = false;
 
+    List<Song> playedList = new ArrayList<>();
+
+    List<Song> favList = new ArrayList<>();
+
+
+    boolean song = true;
+    boolean played = false;
+
+    boolean fav = false;
+
+    boolean isfav = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -190,6 +204,8 @@ public class HomeActivity extends AppCompatActivity {
 
         //enable visualizers
         enableVisualizer();
+
+        loadFavSong();
 
         //storage permission launcher
         storagePermissionLauncher = registerForActivityResult(new ActivityResultContracts.RequestPermission(), granted -> {
@@ -259,6 +275,27 @@ public class HomeActivity extends AppCompatActivity {
                         Toast.makeText(this, "Failed try again!", Toast.LENGTH_SHORT).show();
                     }
                 });
+
+    }
+
+    //load fav Song
+    private void loadFavSong() {
+        SharedPreferences favSongs = getSharedPreferences("favSongs",MODE_PRIVATE);
+        Gson gson = new Gson();
+        String json = favSongs.getString("Titles",null);
+        Type type = new TypeToken<List<Song>>(){}.getType();
+        favList = gson.fromJson(json,type);
+
+        try {
+            if (favList == null){
+                favList = new ArrayList<>();
+                songAdapter.favSong(favList);
+            }else {
+                songAdapter.favSong(favList);
+            }
+        }catch (Exception e){
+
+        }
 
     }
 
@@ -518,6 +555,7 @@ public class HomeActivity extends AppCompatActivity {
 
 
         song_image = findViewById(R.id.song_image);
+        player_fav_btn = findViewById(R.id.player_fav_btn);
     }
 
     //home find id
@@ -539,9 +577,64 @@ public class HomeActivity extends AppCompatActivity {
         next_icon = findViewById(R.id.next_icon);
 
         swipe_refresh = findViewById(R.id.swipe_refresh);
+        TabLayout = findViewById(R.id.TabLayout);
+
+        TabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(com.google.android.material.tabs.TabLayout.Tab tab) {
+                if (TabLayout.getSelectedTabPosition() == 0){
+                    song = true;
+                    played = false;
+                    fav = false;
+                    fetchSongs();
+                    recyclerView.setVisibility(View.VISIBLE);
+                    NoSongFoundText.setVisibility(View.GONE);
+                }
+                if (TabLayout.getSelectedTabPosition() == 1){
+                    song = false;
+                    played = true;
+                    fav = false;
+                    if (playedList.isEmpty()) {
+                        NoSongFoundText.setVisibility(View.VISIBLE);
+                        recyclerView.setVisibility(View.GONE);
+                        songAdapter.playedSong(playedList);
+                    }else {
+                        NoSongFoundText.setVisibility(View.GONE);
+                        recyclerView.setVisibility(View.VISIBLE);
+                        songAdapter.playedSong(playedList);
+                    }
+                }
+                if (TabLayout.getSelectedTabPosition() == 2){
+//                    fav songs
+                    song = false;
+                    played = false;
+                    fav = true;
+                    if (favList.isEmpty()) {
+                        NoSongFoundText.setVisibility(View.VISIBLE);
+                        recyclerView.setVisibility(View.GONE);
+                        songAdapter.favSong(favList);
+                    }else {
+                        NoSongFoundText.setVisibility(View.GONE);
+                        recyclerView.setVisibility(View.VISIBLE);
+                        songAdapter.favSong(favList);
+                    }
+                }
+            }
+
+            @Override
+            public void onTabUnselected(com.google.android.material.tabs.TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(com.google.android.material.tabs.TabLayout.Tab tab) {
+
+            }
+        });
     }
 
     private void filteredSong(String toString) {
+
         List<Song> filteredList = new ArrayList<>();
 
         if (allSongs.size() > 0) {
@@ -592,6 +685,8 @@ public class HomeActivity extends AppCompatActivity {
                 Player.Listener.super.onMediaItemTransition(mediaItem, reason);
                 //show the playing song
                 assert mediaItem != null;
+                String title = String.valueOf(player.getCurrentMediaItem().mediaMetadata.title).toLowerCase();
+                checkFav(title);
                 music_name.setText(mediaItem.mediaMetadata.title);
                 player_song_name.setText(mediaItem.mediaMetadata.title);
                 settings_music_name.setText(mediaItem.mediaMetadata.title);
@@ -618,6 +713,7 @@ public class HomeActivity extends AppCompatActivity {
                 //set the visualizer
                 activateAudioVisualizer();
 
+
             }
 
             @SuppressLint("ResourceAsColor")
@@ -626,6 +722,8 @@ public class HomeActivity extends AppCompatActivity {
                 Player.Listener.super.onPlaybackStateChanged(playbackState);
                 if (playbackState == ExoPlayer.STATE_READY) {
                     //set the values to player view
+                    String title = String.valueOf(player.getCurrentMediaItem().mediaMetadata.title).toLowerCase();
+                    checkFav(title);
                     homeControlWrapper.setVisibility(View.VISIBLE);
                     music_name.setText(Objects.requireNonNull(player.getCurrentMediaItem()).mediaMetadata.title);
                     player_song_name.setText(Objects.requireNonNull(player.getCurrentMediaItem()).mediaMetadata.title);
@@ -654,6 +752,8 @@ public class HomeActivity extends AppCompatActivity {
                     //set the visualizer
                     activateAudioVisualizer();
                 } else {
+                    String title = String.valueOf(player.getCurrentMediaItem().mediaMetadata.title).toLowerCase();
+                    checkFav(title);
                     player_play_btn.setImageResource(R.drawable.play_icon);
                     play_icon.setImageResource(R.drawable.home_play_icon);
                     song_image.clearAnimation();
@@ -664,6 +764,8 @@ public class HomeActivity extends AppCompatActivity {
             public void onIsPlayingChanged(boolean isPlaying) {
                 Player.Listener.super.onIsPlayingChanged(isPlaying);
                 if (isPlaying) {
+                    String title = String.valueOf(player.getCurrentMediaItem().mediaMetadata.title).toLowerCase();
+                    checkFav(title);
                     homeControlWrapper.setVisibility(View.VISIBLE);
                     music_name.setText(Objects.requireNonNull(player.getCurrentMediaItem()).mediaMetadata.title);
                     player_song_name.setText(Objects.requireNonNull(player.getCurrentMediaItem()).mediaMetadata.title);
@@ -691,51 +793,16 @@ public class HomeActivity extends AppCompatActivity {
 
                     //set the visualizer
                     activateAudioVisualizer();
+
                 }else {
+                    String title = String.valueOf(player.getCurrentMediaItem().mediaMetadata.title).toLowerCase();
+                    checkFav(title);
                     player_play_btn.setImageResource(R.drawable.play_icon);
                     play_icon.setImageResource(R.drawable.home_play_icon);
                     song_image.clearAnimation();
                 }
             }
 
-            @Override
-            public void onDeviceVolumeChanged(int volume, boolean muted) {
-                Player.Listener.super.onDeviceVolumeChanged(volume, muted);
-
-                if (muted) {
-                    player.pause();
-                    player_play_btn.setImageResource(R.drawable.play_icon);
-                    play_icon.setImageResource(R.drawable.home_play_icon);
-                    song_image.clearAnimation();
-                } else {
-                    //set the values to player view
-                    player.play();
-                    music_name.setText(Objects.requireNonNull(player.getCurrentMediaItem()).mediaMetadata.title);
-                    player_song_name.setText(Objects.requireNonNull(player.getCurrentMediaItem()).mediaMetadata.title);
-                    settings_music_name.setText(Objects.requireNonNull(player.getCurrentMediaItem()).mediaMetadata.title);
-
-                    total_song_played_duration.setText(getReadableTime((int) player.getCurrentPosition()));
-                    total_song_duration.setText(getReadableTime((int) player.getDuration()));
-
-                    player_seekbar.setMax((int) player.getDuration());
-                    player_seekbar.setProgress((int) player.getCurrentPosition());
-
-                    player_play_btn.setImageResource(R.drawable.pause_icon);
-                    play_icon.setImageResource(R.drawable.home_pause_icon);
-
-                    //show current art work
-                    showCurrentArtWork();
-
-                    //update progress of playing song
-                    updatePlayerPositionProgress();
-
-                    //art work animation
-                    song_image.setAnimation(loadRotation());
-
-                    //set the visualizer
-                    activateAudioVisualizer();
-                }
-            }
 
         });
 
@@ -754,14 +821,18 @@ public class HomeActivity extends AppCompatActivity {
                 playPlayerValue = true;
                 playHomeValue = false;
                 playOrPausePlayer();
-            } else if (search == true && filteredList.size() <= 1) {
+            }
+            else if (search == true && filteredList.size() <= 1) {
                 playPlayerValue = true;
                 playHomeValue = false;
                 playOrPausePlayer();
-            } else {
+            }
+            else {
                 player.setMediaItems(getMediaItems(), 0, 0);
                 player.prepare();
                 player.play();
+                String title = String.valueOf(player.getCurrentMediaItem().mediaMetadata.title).toLowerCase();
+                checkFav(title);
 
             }
         });
@@ -772,14 +843,18 @@ public class HomeActivity extends AppCompatActivity {
                 playPlayerValue = false;
                 playHomeValue = true;
                 playOrPausePlayer();
-            } else if (search == true && filteredList.size() <= 1) {
+            }
+            else if (search == true && filteredList.size() <= 1) {
                 playPlayerValue = false;
                 playHomeValue = true;
                 playOrPausePlayer();
-            } else {
+            }
+            else {
                 player.setMediaItems(getMediaItems(), 0, 0);
                 player.prepare();
                 player.play();
+                String title = String.valueOf(player.getCurrentMediaItem().mediaMetadata.title).toLowerCase();
+                checkFav(title);
             }
         });
 
@@ -865,6 +940,63 @@ public class HomeActivity extends AppCompatActivity {
                 settingsViewControl();
             }
         });
+
+        //player fav button
+        player_fav_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String title = String.valueOf(player.getCurrentMediaItem().mediaMetadata.title).toLowerCase();
+                SharedPreferences favSongs = getSharedPreferences("favSongs",MODE_PRIVATE);
+                SharedPreferences.Editor favEditor = favSongs.edit();
+                Gson gson = new Gson();
+
+                if (isfav == false){
+                    try {
+                        for (Song song : favList) {
+                            if (song.getTitle().toLowerCase().contains(title)) {
+                                favList.remove(song);
+                                isfav = true;
+
+                                String  json = gson.toJson(favList);
+                                favEditor.putString("Titles",json);
+                                favEditor.apply();
+                            }
+                        }
+                    }catch (Exception e){}
+
+                        if (allSongs.size() > 0) {
+                            for (Song song : allSongs) {
+                                if (song.getTitle().toLowerCase().contains(title)) {
+                                    favList.add(song);
+                                    songAdapter.notifyDataSetChanged();
+                                    Toast.makeText(HomeActivity.this, "It's A favorite! Press again to remove", Toast.LENGTH_SHORT).show();
+                                    isfav = true;
+
+                                    String  json = gson.toJson(favList);
+                                    favEditor.putString("Titles",json);
+                                    favEditor.apply();
+                                }
+                            }
+                        }
+                }
+                else if (isfav == true){
+                        if (favList.size() > 0) {
+                            for (Song song : favList) {
+                                if (song.getTitle().toLowerCase().contains(title)) {
+                                    favList.remove(song);
+                                    songAdapter.notifyDataSetChanged();
+                                    Toast.makeText(HomeActivity.this, "Removed from favorite", Toast.LENGTH_SHORT).show();
+                                    isfav = false;
+                                    String  json = gson.toJson(favList);
+                                    favEditor.putString("Titles",json);
+                                    favEditor.apply();
+                                }
+                            }
+                        }
+                }
+            }
+        });
+
     }
 
     //bind service
@@ -889,6 +1021,8 @@ public class HomeActivity extends AppCompatActivity {
 
             if (player.isPlaying()) {
                 //set the values to player view
+                String title = String.valueOf(player.getCurrentMediaItem().mediaMetadata.title).toLowerCase();
+                checkFav(title);
                 homeControlWrapper.setVisibility(View.VISIBLE);
                 music_name.setText(Objects.requireNonNull(player.getCurrentMediaItem()).mediaMetadata.title);
                 player_song_name.setText(Objects.requireNonNull(player.getCurrentMediaItem()).mediaMetadata.title);
@@ -955,7 +1089,6 @@ public class HomeActivity extends AppCompatActivity {
     private MediaMetadata getMetaData(Song song) {
         return new MediaMetadata.Builder()
                 .setTitle(song.getTitle())
-                .setArtworkUri(song.getArtworkUri())
                 .build();
     }
 
@@ -1356,10 +1489,14 @@ public class HomeActivity extends AppCompatActivity {
                 player.pause();
                 player_play_btn.setImageResource(R.drawable.play_icon);
                 song_image.clearAnimation();
+                String title = String.valueOf(player.getCurrentMediaItem().mediaMetadata.title).toLowerCase();
+                checkFav(title);
             } else {
                 player.play();
                 player_play_btn.setImageResource(R.drawable.pause_icon);
                 song_image.startAnimation(loadRotation());
+                String title = String.valueOf(player.getCurrentMediaItem().mediaMetadata.title).toLowerCase();
+                checkFav(title);
             }
 
         }
@@ -1369,21 +1506,29 @@ public class HomeActivity extends AppCompatActivity {
                 player.pause();
                 play_icon.setImageResource(R.drawable.home_play_icon);
                 song_image.clearAnimation();
+                String title = String.valueOf(player.getCurrentMediaItem().mediaMetadata.title).toLowerCase();
+                checkFav(title);
             } else {
                 player.play();
                 play_icon.setImageResource(R.drawable.home_pause_icon);
                 song_image.startAnimation(loadRotation());
+                String title = String.valueOf(player.getCurrentMediaItem().mediaMetadata.title).toLowerCase();
+                checkFav(title);
+
             }
         }
     }
-
     //skip to next song
     private void skipToNextSong() {
         if (player.hasNextMediaItem()) {
             player.seekToNext();
+            player.play();
+            String title = String.valueOf(player.getCurrentMediaItem().mediaMetadata.title).toLowerCase();
+            checkFav(title);
         }else {
             player.setMediaItems(getMediaItems(),0,0);
-
+            String title = String.valueOf(player.getCurrentMediaItem().mediaMetadata.title).toLowerCase();
+            checkFav(title);
         }
     }
 
@@ -1391,11 +1536,30 @@ public class HomeActivity extends AppCompatActivity {
     private void skipToPreviousSong() {
         if (player.hasPreviousMediaItem()) {
             player.seekToPrevious();
-        }else {
+            player.play();
+            String title = String.valueOf(player.getCurrentMediaItem().mediaMetadata.title).toLowerCase();
+            checkFav(title);
+        }
+        else {
             player.setMediaItems(getMediaItems(),allSongs.size()-1,0);
+            String title = String.valueOf(player.getCurrentMediaItem().mediaMetadata.title).toLowerCase();
+            checkFav(title);
         }
     }
 
+    //    check for fav
+    private void checkFav(String title) {
+        try {
+            for (Song song : favList) {
+                if (song.getTitle().toLowerCase().contains(title)) {
+                    isfav = true;
+                }else {
+                    isfav = false;
+
+                }
+            }
+        }catch (Exception e){}
+    }
     //Rotation animation
     private Animation loadRotation() {
         RotateAnimation rotateAnimation = new RotateAnimation(0, 360,
@@ -1696,17 +1860,14 @@ public class HomeActivity extends AppCompatActivity {
                 String path = cursor.getString(pathColumn);
 
                 //song uri
-                Uri uri = ContentUris.withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, id);
-
-                //album artwork uri
-                Uri albumArtworkUri = ContentUris.withAppendedId(Uri.parse("content://media/external/audio/albumart"), albumId);
+                String uri = String.valueOf(ContentUris.withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, id));
 
                 //remove mp3 extension
                 name = name.substring(0, name.lastIndexOf("."));
 
 
                 //song item
-                Song song = new Song(name, uri, albumArtworkUri, size, duration, id, path);
+                Song song = new Song(name, uri, size, duration, id, path);
 
                 //add song to song list
                 songs.add(song);
@@ -1736,6 +1897,7 @@ public class HomeActivity extends AppCompatActivity {
             Toast.makeText(this, "No songs", Toast.LENGTH_SHORT).show();
             return;
         }
+
         //save songs
         allSongs.clear();
         allSongs.addAll(songs);
@@ -1792,7 +1954,7 @@ public class HomeActivity extends AppCompatActivity {
                             try {
                                 File fileToDelete = new File(position.getPath());
                                 fileToDelete.delete();
-                                getContentResolver().delete(position.getUri(), null, null);
+                                getContentResolver().delete(Uri.parse(position.getUri()), null, null);
                                 allSongs.remove(position);
                                 fetchSongs();
                                 Toast.makeText(HomeActivity.this, "File Deleted", Toast.LENGTH_SHORT).show();
@@ -1805,7 +1967,7 @@ public class HomeActivity extends AppCompatActivity {
                             }
                         } else {
                             List<Uri> deleteList = new ArrayList<>();
-                            deleteList.add(position.getUri());
+                            deleteList.add(Uri.parse(position.getUri()));
                             PendingIntent pendingIntent = MediaStore.createDeleteRequest(getContentResolver(), deleteList);
                             IntentSenderRequest intentSenderRequest = new IntentSenderRequest.Builder(pendingIntent.getIntentSender()).build();
 
@@ -1888,6 +2050,18 @@ public class HomeActivity extends AppCompatActivity {
             }
         });
 
+        songAdapter.setOnItemPlayedClickListener(new SongAdapter.onItemClickPlayedListener() {
+            @Override
+            public void onItemPlayedClick(Song position) {
+                String title = position.getTitle().toLowerCase();
+
+
+                playedSongs(title);
+
+            }
+        });
+
+
         //animation to adapter
         ScaleInAnimationAdapter scaleInAnimationAdapter = new ScaleInAnimationAdapter(songAdapter);
         scaleInAnimationAdapter.setDuration(1000);
@@ -1898,11 +2072,63 @@ public class HomeActivity extends AppCompatActivity {
         swipe_refresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
+                if (song == true){
                     fetchSongs();
                     swipe_refresh.setRefreshing(false);
+                }
+                if (played == true){
+                    if (playedList.isEmpty()) {
+                        NoSongFoundText.setVisibility(View.VISIBLE);
+                        recyclerView.setVisibility(View.GONE);
+                        songAdapter.playedSong(playedList);
+                        swipe_refresh.setRefreshing(false);
+
+                    }else {
+                        NoSongFoundText.setVisibility(View.GONE);
+                        recyclerView.setVisibility(View.VISIBLE);
+                        songAdapter.playedSong(playedList);
+                        swipe_refresh.setRefreshing(false);
+
+                    }
+                }
+                if (fav == true){
+                    if (favList.isEmpty()) {
+                        NoSongFoundText.setVisibility(View.VISIBLE);
+                        recyclerView.setVisibility(View.GONE);
+                        songAdapter.favSong(favList);
+                        swipe_refresh.setRefreshing(false);
+
+                    }else {
+                        NoSongFoundText.setVisibility(View.GONE);
+                        recyclerView.setVisibility(View.VISIBLE);
+                        songAdapter.favSong(favList);
+                        swipe_refresh.setRefreshing(false);
+
+                    }
+                }
             }
         });
     }
+
+    private void playedSongs(String title) {
+        try {
+            for (Song song1 : playedList) {
+                if (song1.getTitle().toLowerCase().contains(title)) {
+                    playedList.remove(song1);
+                }
+            }
+        }catch (Exception e){
+        }
+
+        if (allSongs.size() > 0) {
+            for (Song song : allSongs) {
+                if (song.getTitle().toLowerCase().contains(title)) {
+                    playedList.add(song);
+                }
+            }
+        }
+    }
+
     //set song as ringtone
     private void setAsRingtone(String musicId) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
