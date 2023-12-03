@@ -290,8 +290,10 @@ public class HomeActivity extends AppCompatActivity {
             if (favList == null){
                 favList = new ArrayList<>();
                 songAdapter.favSong(favList);
+                isfav = true;
             }else {
                 songAdapter.favSong(favList);
+                isfav = true;
             }
         }catch (Exception e){
 
@@ -670,6 +672,8 @@ public class HomeActivity extends AppCompatActivity {
         homeControlWrapper.setOnClickListener(view -> {
             hideKeyBoard();
             player_view_layout.setVisibility(View.VISIBLE);
+            String title = String.valueOf(player.getCurrentMediaItem().mediaMetadata.title).toLowerCase();
+            checkFav(title);
         });
 
         //play list button clicked
@@ -685,8 +689,6 @@ public class HomeActivity extends AppCompatActivity {
                 Player.Listener.super.onMediaItemTransition(mediaItem, reason);
                 //show the playing song
                 assert mediaItem != null;
-                String title = String.valueOf(player.getCurrentMediaItem().mediaMetadata.title).toLowerCase();
-                checkFav(title);
                 music_name.setText(mediaItem.mediaMetadata.title);
                 player_song_name.setText(mediaItem.mediaMetadata.title);
                 settings_music_name.setText(mediaItem.mediaMetadata.title);
@@ -722,8 +724,6 @@ public class HomeActivity extends AppCompatActivity {
                 Player.Listener.super.onPlaybackStateChanged(playbackState);
                 if (playbackState == ExoPlayer.STATE_READY) {
                     //set the values to player view
-                    String title = String.valueOf(player.getCurrentMediaItem().mediaMetadata.title).toLowerCase();
-                    checkFav(title);
                     homeControlWrapper.setVisibility(View.VISIBLE);
                     music_name.setText(Objects.requireNonNull(player.getCurrentMediaItem()).mediaMetadata.title);
                     player_song_name.setText(Objects.requireNonNull(player.getCurrentMediaItem()).mediaMetadata.title);
@@ -752,8 +752,6 @@ public class HomeActivity extends AppCompatActivity {
                     //set the visualizer
                     activateAudioVisualizer();
                 } else {
-                    String title = String.valueOf(player.getCurrentMediaItem().mediaMetadata.title).toLowerCase();
-                    checkFav(title);
                     player_play_btn.setImageResource(R.drawable.play_icon);
                     play_icon.setImageResource(R.drawable.home_play_icon);
                     song_image.clearAnimation();
@@ -764,8 +762,6 @@ public class HomeActivity extends AppCompatActivity {
             public void onIsPlayingChanged(boolean isPlaying) {
                 Player.Listener.super.onIsPlayingChanged(isPlaying);
                 if (isPlaying) {
-                    String title = String.valueOf(player.getCurrentMediaItem().mediaMetadata.title).toLowerCase();
-                    checkFav(title);
                     homeControlWrapper.setVisibility(View.VISIBLE);
                     music_name.setText(Objects.requireNonNull(player.getCurrentMediaItem()).mediaMetadata.title);
                     player_song_name.setText(Objects.requireNonNull(player.getCurrentMediaItem()).mediaMetadata.title);
@@ -795,8 +791,6 @@ public class HomeActivity extends AppCompatActivity {
                     activateAudioVisualizer();
 
                 }else {
-                    String title = String.valueOf(player.getCurrentMediaItem().mediaMetadata.title).toLowerCase();
-                    checkFav(title);
                     player_play_btn.setImageResource(R.drawable.play_icon);
                     play_icon.setImageResource(R.drawable.home_play_icon);
                     song_image.clearAnimation();
@@ -941,11 +935,12 @@ public class HomeActivity extends AppCompatActivity {
             }
         });
 
-        //player fav button
+//        player fav button
         player_fav_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String title = String.valueOf(player.getCurrentMediaItem().mediaMetadata.title).toLowerCase();
+
                 SharedPreferences favSongs = getSharedPreferences("favSongs",MODE_PRIVATE);
                 SharedPreferences.Editor favEditor = favSongs.edit();
                 Gson gson = new Gson();
@@ -956,7 +951,7 @@ public class HomeActivity extends AppCompatActivity {
                             if (song.getTitle().toLowerCase().contains(title)) {
                                 favList.remove(song);
                                 isfav = true;
-
+                                player_fav_btn.setImageResource(R.drawable.favorite_border_con);
                                 String  json = gson.toJson(favList);
                                 favEditor.putString("Titles",json);
                                 favEditor.apply();
@@ -971,7 +966,7 @@ public class HomeActivity extends AppCompatActivity {
                                     songAdapter.notifyDataSetChanged();
                                     Toast.makeText(HomeActivity.this, "It's A favorite! Press again to remove", Toast.LENGTH_SHORT).show();
                                     isfav = true;
-
+                                    player_fav_btn.setImageResource(R.drawable.favorite_icon);
                                     String  json = gson.toJson(favList);
                                     favEditor.putString("Titles",json);
                                     favEditor.apply();
@@ -980,6 +975,7 @@ public class HomeActivity extends AppCompatActivity {
                         }
                 }
                 else if (isfav == true){
+                    try {
                         if (favList.size() > 0) {
                             for (Song song : favList) {
                                 if (song.getTitle().toLowerCase().contains(title)) {
@@ -987,16 +983,17 @@ public class HomeActivity extends AppCompatActivity {
                                     songAdapter.notifyDataSetChanged();
                                     Toast.makeText(HomeActivity.this, "Removed from favorite", Toast.LENGTH_SHORT).show();
                                     isfav = false;
+                                    player_fav_btn.setImageResource(R.drawable.favorite_border_con);
                                     String  json = gson.toJson(favList);
                                     favEditor.putString("Titles",json);
                                     favEditor.apply();
                                 }
                             }
                         }
+                    }catch (Exception e){}
                 }
             }
         });
-
     }
 
     //bind service
@@ -1021,8 +1018,6 @@ public class HomeActivity extends AppCompatActivity {
 
             if (player.isPlaying()) {
                 //set the values to player view
-                String title = String.valueOf(player.getCurrentMediaItem().mediaMetadata.title).toLowerCase();
-                checkFav(title);
                 homeControlWrapper.setVisibility(View.VISIBLE);
                 music_name.setText(Objects.requireNonNull(player.getCurrentMediaItem()).mediaMetadata.title);
                 player_song_name.setText(Objects.requireNonNull(player.getCurrentMediaItem()).mediaMetadata.title);
@@ -1534,15 +1529,14 @@ public class HomeActivity extends AppCompatActivity {
 
     //skip to previous song
     private void skipToPreviousSong() {
+        String title = String.valueOf(player.getCurrentMediaItem().mediaMetadata.title).toLowerCase();
         if (player.hasPreviousMediaItem()) {
             player.seekToPrevious();
             player.play();
-            String title = String.valueOf(player.getCurrentMediaItem().mediaMetadata.title).toLowerCase();
             checkFav(title);
         }
         else {
             player.setMediaItems(getMediaItems(),allSongs.size()-1,0);
-            String title = String.valueOf(player.getCurrentMediaItem().mediaMetadata.title).toLowerCase();
             checkFav(title);
         }
     }
@@ -1553,8 +1547,10 @@ public class HomeActivity extends AppCompatActivity {
             for (Song song : favList) {
                 if (song.getTitle().toLowerCase().contains(title)) {
                     isfav = true;
+                    player_fav_btn.setImageResource(R.drawable.favorite_icon);
                 }else {
                     isfav = false;
+                    player_fav_btn.setImageResource(R.drawable.favorite_border_con);
 
                 }
             }
@@ -2058,6 +2054,23 @@ public class HomeActivity extends AppCompatActivity {
 
                 playedSongs(title);
 
+            }
+        });
+
+        //check for fav
+        songAdapter.setOnFavClickListener(new SongAdapter.onItemFavListener() {
+            @Override
+            public void onItemFavClick(Song position) {
+                String title = position.getTitle().toLowerCase();
+                for (Song song1:favList){
+                    if (song1.getTitle().toLowerCase().contains(title)){
+                        isfav = true;
+                        player_fav_btn.setImageResource(R.drawable.favorite_icon);
+                    }else {
+                        isfav = false;
+                        player_fav_btn.setImageResource(R.drawable.favorite_border_con);
+                    }
+                }
             }
         });
 
