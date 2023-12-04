@@ -78,17 +78,6 @@ public class SongAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>  
     }
 
 
-    private onItemFavListener favListener;
-
-    public interface onItemFavListener{
-        void onItemFavClick(Song position);
-    }
-
-    public void setOnFavClickListener(onItemFavListener clickFavListener){
-        favListener = clickFavListener;
-    }
-
-
     //constructor
     public SongAdapter(Context context, List<Song> songs, ExoPlayer player, RelativeLayout playerView) {
         this.context = context;
@@ -103,7 +92,7 @@ public class SongAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>  
 
         //inflate song row item
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.song_rows,parent,false);
-        return new SongViewHolder(view,listener,ringListener,playedListener,favListener);
+        return new SongViewHolder(view,listener,ringListener,playedListener);
     }
     @SuppressLint("ResourceAsColor")
     @Override
@@ -132,24 +121,17 @@ public class SongAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>  
             if (player.isPlaying()){
                 player.setMediaItems(getMediaItems(),position,0);
                 playedListener.onItemPlayedClick(songs.get(position));
-                favListener.onItemFavClick(songs.get(position));
             }
 
 
             if (!player.isPlaying()){
                 player.setMediaItems(getMediaItems(),position,0);
                 playedListener.onItemPlayedClick(songs.get(position));
-                favListener.onItemFavClick(songs.get(position));
-
-
             }
             else {
                 player.pause();
                 player.seekTo(position,0);
                 playedListener.onItemPlayedClick(songs.get(position));
-                favListener.onItemFavClick(songs.get(position));
-
-
             }
 
             //prepare and play
@@ -178,7 +160,6 @@ public class SongAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>  
                         player.prepare();
                         player.play();
                         playedListener.onItemPlayedClick(songs.get(position));
-                        favListener.onItemFavClick(songs.get(position));
 
                     }
                     if (menuItem.getItemId() == R.id.share_option){
@@ -278,8 +259,7 @@ public class SongAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>  
         TextView titleHolder,durationHolder,sizeHolder;
 
         public SongViewHolder(@NonNull View itemView, onItemClickListener listener,
-                              onItemClickRingListener ringListener,onItemClickPlayedListener playedListener,
-                              onItemFavListener favListener){
+                              onItemClickRingListener ringListener,onItemClickPlayedListener playedListener){
             super(itemView);
 
             artworkHolder = itemView.findViewById(R.id.songs_view);

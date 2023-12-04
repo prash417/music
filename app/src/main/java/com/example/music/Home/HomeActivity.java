@@ -639,20 +639,58 @@ public class HomeActivity extends AppCompatActivity {
 
         List<Song> filteredList = new ArrayList<>();
 
-        if (allSongs.size() > 0) {
-            for (Song song : allSongs) {
-                if (song.getTitle().toLowerCase().contains(toString)) {
-                    filteredList.add(song);
+        if (song == true){
+            if (allSongs.size() > 0) {
+                for (Song song : allSongs) {
+                    if (song.getTitle().toLowerCase().contains(toString)) {
+                        filteredList.add(song);
+                    }
+                }
+                if (filteredList.isEmpty()) {
+                    NoSongFoundText.setVisibility(View.VISIBLE);
+                    recyclerView.setVisibility(View.GONE);
+                    songAdapter.filterSong(filteredList);
+                }else {
+                    NoSongFoundText.setVisibility(View.GONE);
+                    recyclerView.setVisibility(View.VISIBLE);
+                    songAdapter.filterSong(filteredList);
                 }
             }
-            if (filteredList.isEmpty()) {
-                NoSongFoundText.setVisibility(View.VISIBLE);
-                recyclerView.setVisibility(View.GONE);
-                songAdapter.filterSong(filteredList);
-            }else {
-                NoSongFoundText.setVisibility(View.GONE);
-                recyclerView.setVisibility(View.VISIBLE);
-                songAdapter.filterSong(filteredList);
+        }
+        if (played == true){
+            if (playedList.size() >= 0) {
+                for (Song song : playedList) {
+                    if (song.getTitle().toLowerCase().contains(toString)) {
+                        filteredList.add(song);
+                    }
+                }
+                if (filteredList.isEmpty()) {
+                    NoSongFoundText.setVisibility(View.VISIBLE);
+                    recyclerView.setVisibility(View.GONE);
+                    songAdapter.filterSong(filteredList);
+                }else {
+                    NoSongFoundText.setVisibility(View.GONE);
+                    recyclerView.setVisibility(View.VISIBLE);
+                    songAdapter.filterSong(filteredList);
+                }
+            }
+        }
+        if (fav == true){
+            if (favList.size() >= 0) {
+                for (Song song : favList) {
+                    if (song.getTitle().toLowerCase().contains(toString)) {
+                        filteredList.add(song);
+                    }
+                }
+                if (filteredList.isEmpty()) {
+                    NoSongFoundText.setVisibility(View.VISIBLE);
+                    recyclerView.setVisibility(View.GONE);
+                    songAdapter.filterSong(filteredList);
+                }else {
+                    NoSongFoundText.setVisibility(View.GONE);
+                    recyclerView.setVisibility(View.VISIBLE);
+                    songAdapter.filterSong(filteredList);
+                }
             }
         }
     }
@@ -688,6 +726,8 @@ public class HomeActivity extends AppCompatActivity {
             public void onMediaItemTransition(MediaItem mediaItem, int reason) {
                 Player.Listener.super.onMediaItemTransition(mediaItem, reason);
                 //show the playing song
+                String title = String.valueOf(player.getCurrentMediaItem().mediaMetadata.title).toLowerCase();
+                checkFav(title);
                 assert mediaItem != null;
                 music_name.setText(mediaItem.mediaMetadata.title);
                 player_song_name.setText(mediaItem.mediaMetadata.title);
@@ -701,8 +741,6 @@ public class HomeActivity extends AppCompatActivity {
                 player_play_btn.setImageResource(R.drawable.pause_icon);
                 play_icon.setImageResource(R.drawable.home_pause_icon);
 
-                //show current art work
-                showCurrentArtWork();
 
                 //update progress of playing song
                 updatePlayerPositionProgress();
@@ -724,6 +762,8 @@ public class HomeActivity extends AppCompatActivity {
                 Player.Listener.super.onPlaybackStateChanged(playbackState);
                 if (playbackState == ExoPlayer.STATE_READY) {
                     //set the values to player view
+                    String title = String.valueOf(player.getCurrentMediaItem().mediaMetadata.title).toLowerCase();
+                    checkFav(title);
                     homeControlWrapper.setVisibility(View.VISIBLE);
                     music_name.setText(Objects.requireNonNull(player.getCurrentMediaItem()).mediaMetadata.title);
                     player_song_name.setText(Objects.requireNonNull(player.getCurrentMediaItem()).mediaMetadata.title);
@@ -738,8 +778,6 @@ public class HomeActivity extends AppCompatActivity {
                     player_play_btn.setImageResource(R.drawable.pause_icon);
                     play_icon.setImageResource(R.drawable.home_pause_icon);
 
-                    //show current art work
-                    showCurrentArtWork();
 
                     //update progress of playing song
                     updatePlayerPositionProgress();
@@ -752,6 +790,8 @@ public class HomeActivity extends AppCompatActivity {
                     //set the visualizer
                     activateAudioVisualizer();
                 } else {
+                    String title = String.valueOf(player.getCurrentMediaItem().mediaMetadata.title).toLowerCase();
+                    checkFav(title);
                     player_play_btn.setImageResource(R.drawable.play_icon);
                     play_icon.setImageResource(R.drawable.home_play_icon);
                     song_image.clearAnimation();
@@ -762,6 +802,8 @@ public class HomeActivity extends AppCompatActivity {
             public void onIsPlayingChanged(boolean isPlaying) {
                 Player.Listener.super.onIsPlayingChanged(isPlaying);
                 if (isPlaying) {
+                    String title = String.valueOf(player.getCurrentMediaItem().mediaMetadata.title).toLowerCase();
+                    checkFav(title);
                     homeControlWrapper.setVisibility(View.VISIBLE);
                     music_name.setText(Objects.requireNonNull(player.getCurrentMediaItem()).mediaMetadata.title);
                     player_song_name.setText(Objects.requireNonNull(player.getCurrentMediaItem()).mediaMetadata.title);
@@ -776,8 +818,6 @@ public class HomeActivity extends AppCompatActivity {
                     player_play_btn.setImageResource(R.drawable.pause_icon);
                     play_icon.setImageResource(R.drawable.home_pause_icon);
 
-                    //show current art work
-                    showCurrentArtWork();
 
                     //update progress of playing song
                     updatePlayerPositionProgress();
@@ -791,6 +831,8 @@ public class HomeActivity extends AppCompatActivity {
                     activateAudioVisualizer();
 
                 }else {
+                    String title = String.valueOf(player.getCurrentMediaItem().mediaMetadata.title).toLowerCase();
+                    checkFav(title);
                     player_play_btn.setImageResource(R.drawable.play_icon);
                     play_icon.setImageResource(R.drawable.home_play_icon);
                     song_image.clearAnimation();
@@ -816,7 +858,7 @@ public class HomeActivity extends AppCompatActivity {
                 playHomeValue = false;
                 playOrPausePlayer();
             }
-            else if (search == true && filteredList.size() <= 1) {
+            else if (search == true || filteredList.size() <= 1 || favList.size() <=1 || playedList.size() <= 1 ) {
                 playPlayerValue = true;
                 playHomeValue = false;
                 playOrPausePlayer();
@@ -838,7 +880,7 @@ public class HomeActivity extends AppCompatActivity {
                 playHomeValue = true;
                 playOrPausePlayer();
             }
-            else if (search == true && filteredList.size() <= 1) {
+            else if (search == true || filteredList.size() <= 1 || favList.size() <= 1 || playedList.size() <= 1) {
                 playPlayerValue = false;
                 playHomeValue = true;
                 playOrPausePlayer();
@@ -951,7 +993,6 @@ public class HomeActivity extends AppCompatActivity {
                             if (song.getTitle().toLowerCase().contains(title)) {
                                 favList.remove(song);
                                 isfav = true;
-                                player_fav_btn.setImageResource(R.drawable.favorite_border_con);
                                 String  json = gson.toJson(favList);
                                 favEditor.putString("Titles",json);
                                 favEditor.apply();
@@ -966,13 +1007,24 @@ public class HomeActivity extends AppCompatActivity {
                                     songAdapter.notifyDataSetChanged();
                                     Toast.makeText(HomeActivity.this, "It's A favorite! Press again to remove", Toast.LENGTH_SHORT).show();
                                     isfav = true;
-                                    player_fav_btn.setImageResource(R.drawable.favorite_icon);
                                     String  json = gson.toJson(favList);
                                     favEditor.putString("Titles",json);
                                     favEditor.apply();
                                 }
                             }
                         }
+
+                    if (fav == true){
+                        if (favList.isEmpty()) {
+                            NoSongFoundText.setVisibility(View.VISIBLE);
+                            recyclerView.setVisibility(View.GONE);
+                            songAdapter.favSong(favList);
+                        }else {
+                            NoSongFoundText.setVisibility(View.GONE);
+                            recyclerView.setVisibility(View.VISIBLE);
+                            songAdapter.favSong(favList);
+                        }
+                    }
                 }
                 else if (isfav == true){
                     try {
@@ -983,14 +1035,25 @@ public class HomeActivity extends AppCompatActivity {
                                     songAdapter.notifyDataSetChanged();
                                     Toast.makeText(HomeActivity.this, "Removed from favorite", Toast.LENGTH_SHORT).show();
                                     isfav = false;
-                                    player_fav_btn.setImageResource(R.drawable.favorite_border_con);
                                     String  json = gson.toJson(favList);
                                     favEditor.putString("Titles",json);
                                     favEditor.apply();
                                 }
                             }
+                            if (fav == true){
+                                if (favList.isEmpty()) {
+                                    NoSongFoundText.setVisibility(View.VISIBLE);
+                                    recyclerView.setVisibility(View.GONE);
+                                    songAdapter.favSong(favList);
+                                }else {
+                                    NoSongFoundText.setVisibility(View.GONE);
+                                    recyclerView.setVisibility(View.VISIBLE);
+                                    songAdapter.favSong(favList);
+                                }
+                            }
                         }
                     }catch (Exception e){}
+
                 }
             }
         });
@@ -1031,9 +1094,6 @@ public class HomeActivity extends AppCompatActivity {
 
                 player_play_btn.setImageResource(R.drawable.pause_icon);
                 play_icon.setImageResource(R.drawable.home_pause_icon);
-
-                //show current art work
-                showCurrentArtWork();
 
                 //update progress of playing song
                 updatePlayerPositionProgress();
@@ -1529,14 +1589,15 @@ public class HomeActivity extends AppCompatActivity {
 
     //skip to previous song
     private void skipToPreviousSong() {
-        String title = String.valueOf(player.getCurrentMediaItem().mediaMetadata.title).toLowerCase();
         if (player.hasPreviousMediaItem()) {
             player.seekToPrevious();
             player.play();
+            String title = String.valueOf(player.getCurrentMediaItem().mediaMetadata.title).toLowerCase();
             checkFav(title);
         }
         else {
             player.setMediaItems(getMediaItems(),allSongs.size()-1,0);
+            String title = String.valueOf(player.getCurrentMediaItem().mediaMetadata.title).toLowerCase();
             checkFav(title);
         }
     }
@@ -1545,13 +1606,10 @@ public class HomeActivity extends AppCompatActivity {
     private void checkFav(String title) {
         try {
             for (Song song : favList) {
-                if (song.getTitle().toLowerCase().contains(title)) {
-                    isfav = true;
-                    player_fav_btn.setImageResource(R.drawable.favorite_icon);
-                }else {
+                if (!song.getTitle().toLowerCase().contains(title)) {
                     isfav = false;
-                    player_fav_btn.setImageResource(R.drawable.favorite_border_con);
-
+                }else {
+                    isfav = true;
                 }
             }
         }catch (Exception e){}
@@ -1579,15 +1637,6 @@ public class HomeActivity extends AppCompatActivity {
                 updatePlayerPositionProgress();
             }
         }, 1000);
-    }
-
-    //show current art work
-    private void showCurrentArtWork() {
-        song_image.setImageURI(Objects.requireNonNull(player.getCurrentMediaItem()).mediaMetadata.artworkUri);
-
-        if (song_image.getDrawable() == null) {
-            song_image.setImageResource(R.drawable.music);
-        }
     }
 
     //get progress time
@@ -2056,24 +2105,6 @@ public class HomeActivity extends AppCompatActivity {
 
             }
         });
-
-        //check for fav
-        songAdapter.setOnFavClickListener(new SongAdapter.onItemFavListener() {
-            @Override
-            public void onItemFavClick(Song position) {
-                String title = position.getTitle().toLowerCase();
-                for (Song song1:favList){
-                    if (song1.getTitle().toLowerCase().contains(title)){
-                        isfav = true;
-                        player_fav_btn.setImageResource(R.drawable.favorite_icon);
-                    }else {
-                        isfav = false;
-                        player_fav_btn.setImageResource(R.drawable.favorite_border_con);
-                    }
-                }
-            }
-        });
-
 
         //animation to adapter
         ScaleInAnimationAdapter scaleInAnimationAdapter = new ScaleInAnimationAdapter(songAdapter);
